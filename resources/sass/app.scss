@@ -1,0 +1,173 @@
+$blue: #496579;
+$white: #fff;
+
+html {
+    font-size: 14px;
+}
+
+body {
+	background-color: #fff;
+	font-family: 'Segoe UI';
+	font-weight: normal;
+	font-size: 14px;
+	overflow-x: hidden;
+}
+
+.blue {
+	background: $blue;
+}
+
+.content-wrapper {
+    background: #fff;
+}
+
+[class*=sidebar-light-] .nav-sidebar > .nav-item {
+
+	// With dropdown
+	&.has-treeview {
+		background: $white;
+
+		> .nav-link.active-nav-tab {
+			background-color: $blue;
+			color: $white;
+		}
+
+		> .nav-treeview {
+			background: $white;
+		}
+
+		> .nav-treeview > .nav-item > .nav-link.active-nav-tab {
+	      	background: #e8e8e8;
+	      	color: #606060;
+	      	font-weight: bold;
+	    }
+	}
+
+	// Single link
+	&:not(.has-treeview) {
+		> .nav-link.active-nav-tab {
+			background-color: $blue;
+			color: $white;
+		}
+	}
+
+}
+
+
+.login-page, .register-page {
+	background: #74C946;
+}
+
+.login-logo a, .register-logo a {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.trinity__primary-color {
+    background: #74C946;
+}
+
+[class*=sidebar-light-] .nav-sidebar > .nav-item:not(.has-treeview) > .nav-link.active-nav-tab {
+	background-color: #74C946;
+}
+
+[class*=sidebar-light-] .nav-sidebar > .nav-item.has-treeview > .nav-link.active-nav-tab {
+	background-color: #74C946;
+}
+
+.btn-primary {
+    background-color: #74C946;
+    border-color: #74C946;
+
+    &.btn--blue {
+    	background-color: #00A7EF;
+	    border-color: #00A7EF;
+
+	    &:hover {
+		    background-color: darken(#00A7EF, 5);
+		    border-color: darken(#00A7EF, 5);
+	    }
+    }
+}
+
+.btn-primary.disabled, .btn-primary:disabled {
+    color: #fff;
+    background-color: #74C946;
+    border-color: #74C946;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+	background-color: #74C946;
+}
+
+.page-item.active .page-link {
+	background-color: #74C946;
+    border-color: #74C946;
+}
+
+.btn-primary.focus, .btn-primary:focus, .btn-primary:hover {
+	background-color: #74C946;
+    border-color: #74C946;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+	background-color: #64a740;
+    border-color: #64a740;
+}
+
+
+
+// SIDEBAR
+.brand-text {
+	font-family: 'Inter';
+	font-weight: normal;
+	font-size: 14px;
+}
+
+.sidebar-collapse {
+	.nav-link {
+	    padding: 0.5rem 1em;
+	}
+}
+
+.nav-link {
+    display: block;
+    padding: 0.5rem 8px;
+
+    * { font-size: 14px; }
+}
+
+// MAIN
+.content-header h1 {
+    font-size: 25px;
+}
+
+.card-footer {
+    padding: 5px 23px;
+    background-color: #f7f7f7;
+}
+
+
+// FOOTER
+.text-info {
+    color: #f8f9fa !important;
+}
+
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 0px;
+}
+
+::-webkit-scrollbar-track {
+  background: #eee; 
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4c4c4;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #868686; 
+}

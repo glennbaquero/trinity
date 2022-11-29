@@ -1,0 +1,128 @@
+stages:
+  - test
+
+test:
+  stage: test
+  # This file is a template, and might need editing before it works on your project.
+  # Official framework image. Look for the different tagged releases at:
+  # https://hub.docker.com/r/library/php
+  image: php:7.2-stretch
+
+  # Pick zero or more services to be used on all builds.
+  # Only needed when using a docker container to run your tests in.
+  # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-a-service
+  services:
+    - mariadb:latest
+
+  variables:
+    MYSQL_DATABASE: trinity_db
+    MYSQL_ROOT_PASSWORD: 6617418ea1ef36cbd696bcd580531ec6
+    DB_HOST: mariadb
+    DB_USERNAME: root
+    DOCKER_DRIVER: overlay2
+
+  # This folder is cached between builds
+  # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+  cache:
+    paths:
+    - vendor/
+    - node_modules/
+
+  # This is a basic example for a gem or script which doesn't use
+  # services such as redis or postgres
+  before_script:
+    # Update packages 
+    - apt-get update -yqq
+
+    ##
+    ## Install ssh-agent if not already installed, it is required by Docker.
+    ## (change apt-get to yum if you use an RPM-based image)
+    ##
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+
+    ##
+    ## Run ssh-agent (inside the build environment)
+    ##
+    - eval $(ssh-agent -s)
+
+    ##
+    ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+    ## We're using tr to fix line endings which makes ed25519 keys work
+    ## without extra base64 encoding.
+    ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+    ##
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+
+    ##
+    ## Create the SSH directory and give it the right permissions
+    ##
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+
+    # Add gitlab.praxxys.ph server to known hosts
+    - ssh-keyscan -p 52222 -t rsa gitlab.praxxys.ph  >> ~/.ssh/known_hosts
+    
+    # Prep for Node
+    - apt-get install gnupg -yqq
+
+    # Upgrade to Node 8
+    - curl -sL https://deb.nodesource.com/setup_11.x | bash -
+
+    # Install dependencies
+    - apt-get install git nodejs unzip libcurl4-gnutls-dev libicu-dev libmcrypt-dev libvpx-dev libjpeg-dev libpng-dev libxpm-dev zlib1g-dev libfreetype6-dev libxml2-dev libexpat1-dev libbz2-dev libgmp3-dev libldap2-dev unixodbc-dev libpq-dev libsqlite3-dev libaspell-dev libsnmp-dev libpcre3-dev libtidy-dev libzip-dev -yqq
+
+    # Install php extensions
+    - docker-php-ext-install mbstring pdo_mysql curl json intl gd xml zip bz2 opcache
+
+    # Install & enable Xdebug for code coverage reports
+    - pecl install xdebug
+    - docker-php-ext-enable xdebug
+
+    # Install Composer and project dependencies.
+    - curl -sS https://getcomposer.org/installer | php
+    - php composer.phar install -vvv
+
+    # Install Node dependencies.
+    # comment this out if you don't have a node dependency
+    - npm install
+
+    # Copy over testing configuration.
+    # Don't forget to set the database config in .env.testing correctly
+    # DB_HOST=mysql
+    # DB_DATABASE=project_name
+    # DB_USERNAME=root
+    # DB_PASSWORD=secret
+    - cp .env.example .env
+
+    # Run npm build
+    # comment this out if you don't have a frontend build
+    # you can change this to to your frontend building script like
+    # npm run build
+    - npm run production
+
+    # Generate an application key.
+    - php artisan key:generate
+    - php artisan jwt:secret
+    - php artisan config:clear
+    - php artisan cache:clear
+    - php artisan view:clear
+    - php artisan route:clear
+
+    # Generate storage link
+    - php artisan storage:link
+
+    # Run database migrations.
+    - php artisan migrate:fresh
+
+    # Run database seed
+    - php artisan db:seed --class="SampleDatabaseSeeder"
+  script:
+  # run laravel tests
+  #- php vendor/bin/phpunit --coverage-text --colors=never 
+  - php vendor/bin/phpunit 
+
+  # run frontend tests
+  # if you have any task for testing frontend
+  # set it in your package.json script
+  # comment this out if you don't have a frontend test
+  #- npm test
