@@ -1,4 +1,4 @@
-# Laravel Boilerplate
+# Trinity setup
 
 ### Installation Guide
 Copy .env.example for values basis
